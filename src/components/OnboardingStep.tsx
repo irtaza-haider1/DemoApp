@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
 
 interface OnboardingStepProps {
   children: React.ReactNode;
@@ -7,7 +7,11 @@ interface OnboardingStepProps {
   titleStyle?: object;
 }
 
-const OnboardingStep: React.FC<OnboardingStepProps> = ({ children, title, titleStyle }) => {
+const OnboardingStep: React.FC<OnboardingStepProps> = ({
+  children,
+  title,
+  titleStyle,
+}) => {
   return (
     <View style={styles.stepContainer}>
       <Text style={[styles.title, titleStyle]}>{title}</Text>
@@ -23,8 +27,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     marginBottom: 10,
-    fontWeight: '800',
-    textAlign: 'left',
+    fontWeight: "800",
+    textAlign: "left",
   },
 });
 

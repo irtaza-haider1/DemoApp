@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,12 +7,12 @@ import {
   StyleSheet,
   Keyboard,
   TouchableWithoutFeedback,
-  Platform
-} from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+  Platform,
+} from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const ConfirmationPage = () => {
-  const [code, setCode] = useState(['', '', '', '']);
+  const [code, setCode] = useState(["", "", "", ""]);
   const [isFocused, setIsFocused] = useState(false);
 
   const handleCodeChange = (index: number, value: string) => {
@@ -32,14 +32,15 @@ const ConfirmationPage = () => {
   return (
     <KeyboardAwareScrollView
       contentContainerStyle={styles.container}
-      extraScrollHeight={Platform.OS === 'ios' ? 20 : 0}
+      extraScrollHeight={Platform.OS === "ios" ? 20 : 0}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View>
           <View style={styles.textContainer}>
             <Text style={styles.title}>Enter confirmation code</Text>
             <Text style={styles.subtitle}>
-              A 4-digit code was sent to <Text style={styles.email}>IrtazaHaider@email.com</Text>
+              A 4-digit code was sent to{" "}
+              <Text style={styles.email}>IrtazaHaider@email.com</Text>
             </Text>
             <View style={styles.codeContainer}>
               {code.map((digit, index) => (
@@ -60,16 +61,20 @@ const ConfirmationPage = () => {
           <View
             style={[
               styles.buttonContainer,
-              { marginTop: isFocused ? 30 : 380 }
+              { marginTop: isFocused ? 30 : 380 },
             ]}
           >
+            {/* Resend Code Button is always shown */}
             <TouchableOpacity style={styles.resendButton}>
               <Text style={styles.resendText}>Resend code</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.continueButton}>
-              <Text style={styles.continueText}>Continue</Text>
-            </TouchableOpacity>
+            {/* Continue Button is shown only when isFocused is true */}
+            {isFocused && (
+              <TouchableOpacity style={styles.continueButton}>
+                <Text style={styles.continueText}>Continue</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -80,72 +85,73 @@ const ConfirmationPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     paddingHorizontal: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   textContainer: {
     marginTop: 100,
-    alignItems: 'center',
+    alignItems: "center",
   },
   title: {
     fontSize: 18,
-    fontWeight: '800',
-    color: '#000',
+    fontWeight: "800",
+    color: "#000",
     marginBottom: 10,
-    fontFamily: 'Inter-Bold',
+    fontFamily: "Inter-Bold",
   },
   subtitle: {
     fontSize: 16,
-    color: '#6c757d',
-    textAlign: 'center',
+    color: "#6c757d",
+    textAlign: "center",
     marginBottom: 30,
-    fontFamily: 'Inter-Regular',
+    fontFamily: "Inter-Regular",
   },
   email: {
     fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: '#6c757d',
-    textAlign: 'center',
+    fontFamily: "Inter-Regular",
+    color: "#6c757d",
+    textAlign: "center",
     marginBottom: 30,
   },
   codeContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '80%',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "80%",
   },
   codeInput: {
     width: 50,
     height: 50,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: '#006FFD',
-    textAlign: 'center',
+    borderColor: "#006FFD",
+    textAlign: "center",
     fontSize: 20,
   },
   buttonContainer: {
-    alignItems: 'center',
+    paddingTop: 60,
+    alignItems: "center",
   },
   resendButton: {
     marginBottom: 20,
   },
   resendText: {
     fontSize: 14,
-    color: '#006FFD',
-    fontFamily: 'Inter-Regular',
+    color: "#006FFD",
+    fontFamily: "Inter-Regular",
   },
   continueButton: {
-    width: '100%',
-    backgroundColor: '#006FFD',
+    width: "100%",
+    backgroundColor: "#006FFD",
     paddingVertical: 15,
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   continueText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
-    fontFamily: 'Inter-Bold',
+    fontWeight: "bold",
+    fontFamily: "Inter-Bold",
   },
 });
 

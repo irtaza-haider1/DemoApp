@@ -117,7 +117,7 @@ const LoginScreen: React.FC = () => {
 
             <TouchableOpacity
               style={styles.loginButton}
-              onPress={() => formik.handleSubmit()} // Wrap the handleSubmit in an anonymous function
+              onPress={() => formik.handleSubmit()}
             >
               <Text style={styles.loginButtonText}>Login</Text>
             </TouchableOpacity>
@@ -166,18 +166,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
   },
   logoContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    // alignItems: "center",
   },
   scrollContainer: {
-    justifyContent: "center",
+    // justifyContent: "center",
   },
   logo: {
-    width: 380,
+    width: 392,
     height: 312,
   },
   welcomeContainer: {

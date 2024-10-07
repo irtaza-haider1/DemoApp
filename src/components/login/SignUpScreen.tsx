@@ -1,33 +1,38 @@
-import React, { useState } from 'react';
-import CheckBox from 'expo-checkbox';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; 
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../types/navigation'; 
+import React from "react";
+import CheckBox from "expo-checkbox";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import { RootStackParamList } from "../../types/navigation";
 
-type SignUpScreenNavigationProp = StackNavigationProp<RootStackParamList, 'SignUp'>;
+type SignUpScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "SignUp"
+>;
 
 const SignUpScreen: React.FC = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [termsAccepted, setTermsAccepted] = useState(false);
+  const navigation = useNavigation<SignUpScreenNavigationProp>();
 
-  const [nameFocused, setNameFocused] = useState(false);
-  const [emailFocused, setEmailFocused] = useState(false);
-  const [passwordFocused, setPasswordFocused] = useState(false);
-  const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
-
-  const navigation = useNavigation<SignUpScreenNavigationProp>(); // Use typed navigation
-
-  const handleSignUp = () => {
-    if (termsAccepted && password === confirmPassword) {
-      navigation.navigate('Confirmation'); // Navigate to the ConfirmationScreen
-    } else {
-      console.log('Passwords do not match or terms are not accepted.');
-    }
-  };
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required("Required"),
+    email: Yup.string().email("Invalid email").required("Required"),
+    password: Yup.string()
+      .min(6, "Password must be at least 6 characters")
+      .required("Required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), undefined], "Passwords must match")
+      .required("Required"),
+    termsAccepted: Yup.boolean().oneOf([true], "Terms must be accepted"),
+  });
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -37,67 +42,112 @@ const SignUpScreen: React.FC = () => {
           <Text style={styles.subtitle}>Create an account to get started</Text>
         </View>
 
-        <View style={styles.formContainer}>
-          <Text style={styles.label}>Name</Text>
-          <TextInput
-            style={[styles.input, nameFocused && styles.inputFocused]}
-            placeholder="Your Name"
-            value={name}
-            onChangeText={setName}
-            onFocus={() => setNameFocused(true)}
-            onBlur={() => setNameFocused(false)}
-          />
+        <Formik
+          initialValues={{
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            termsAccepted: false,
+          }}
+          validationSchema={validationSchema}
+          onSubmit={(values) => {
+            console.log("Form values: ", values);
+            navigation.navigate("Confirmation"); // Navigate to Confirmation screen
+          }}
+        >
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+            setFieldValue,
+          }) => (
+            <View style={styles.formContainer}>
+              <Text style={styles.label}>Name</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Your Name"
+                onChangeText={handleChange("name")}
+                onBlur={handleBlur("name")}
+                value={values.name}
+              />
+              {errors.name && touched.name && (
+                <Text style={styles.errorText}>{errors.name}</Text>
+              )}
 
-          <Text style={styles.label}>Email Address</Text>
-          <TextInput
-            style={[styles.input, emailFocused && styles.inputFocused]}
-            placeholder="name@email.com"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-            onFocus={() => setEmailFocused(true)}
-            onBlur={() => setEmailFocused(false)}
-          />
+              <Text style={styles.label}>Email Address</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="name@email.com"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                value={values.email}
+              />
+              {errors.email && touched.email && (
+                <Text style={styles.errorText}>{errors.email}</Text>
+              )}
 
-          <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={[styles.input, passwordFocused && styles.inputFocused]}
-            placeholder="Create a password"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-            onFocus={() => setPasswordFocused(true)}
-            onBlur={() => setPasswordFocused(false)}
-          />
+              <Text style={styles.label}>Password</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Create a password"
+                secureTextEntry
+                onChangeText={handleChange("password")}
+                onBlur={handleBlur("password")}
+                value={values.password}
+              />
+              {errors.password && touched.password && (
+                <Text style={styles.errorText}>{errors.password}</Text>
+              )}
 
-          <TextInput
-            style={[styles.input, confirmPasswordFocused && styles.inputFocused]}
-            placeholder="Confirm password"
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            onFocus={() => setConfirmPasswordFocused(true)}
-            onBlur={() => setConfirmPasswordFocused(false)}
-          />
+              <Text style={styles.label}>Confirm Password</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm password"
+                secureTextEntry
+                onChangeText={handleChange("confirmPassword")}
+                onBlur={handleBlur("confirmPassword")}
+                value={values.confirmPassword}
+              />
+              {errors.confirmPassword && touched.confirmPassword && (
+                <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+              )}
 
-          <View style={styles.checkboxContainer}>
-            <CheckBox value={termsAccepted} onValueChange={setTermsAccepted} />
-            <Text style={styles.checkboxText}>
-              I've read and agree with the{' '}
-              <Text style={styles.link}>Terms and Conditions</Text> and{' '}
-              <Text style={styles.link}>Privacy Policy</Text>.
-            </Text>
-          </View>
+              <View style={styles.checkboxContainer}>
+                <CheckBox
+                  value={values.termsAccepted}
+                  onValueChange={(value) =>
+                    setFieldValue("termsAccepted", value)
+                  }
+                />
+                <Text style={styles.checkboxText}>
+                  I've read and agree with the{" "}
+                  <Text style={styles.link}>Terms and Conditions</Text> and{" "}
+                  <Text style={styles.link}>Privacy Policy</Text>.
+                </Text>
+              </View>
+              {errors.termsAccepted && (
+                <Text style={styles.errorText}>{errors.termsAccepted}</Text>
+              )}
 
-          <TouchableOpacity
-            style={[styles.signUpButton, !termsAccepted && styles.disabledButton]}
-            disabled={!termsAccepted}
-            onPress={handleSignUp}
-          >
-            <Text style={styles.buttonText}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
+              <TouchableOpacity
+                style={[
+                  styles.signUpButton,
+                  !values.termsAccepted && styles.disabledButton,
+                ]}
+                disabled={!values.termsAccepted}
+                onPress={handleSubmit as any}
+              >
+                <Text style={styles.buttonText}>Sign Up</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </Formik>
       </View>
     </ScrollView>
   );
@@ -106,85 +156,86 @@ const SignUpScreen: React.FC = () => {
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingHorizontal: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   container: {
     flex: 1,
     marginTop: 30,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   titleContainer: {
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
     marginBottom: 20,
   },
   title: {
     fontSize: 16,
-    fontWeight: '800',
-    color: '#000',
-    fontFamily: 'Inter-Bold',
+    fontWeight: "800",
+    color: "#000",
+    fontFamily: "Inter-Bold",
   },
   subtitle: {
     fontSize: 12,
-    fontWeight: '400',
-    color: '#6c757d',
+    fontWeight: "400",
+    color: "#6c757d",
     marginTop: 5,
-    fontFamily: 'Inter-Regular',
+    fontFamily: "Inter-Regular",
   },
   formContainer: {
     marginTop: 20,
-    width: '100%',
+    width: "100%",
   },
   label: {
     fontSize: 14,
     marginBottom: 5,
-    color: '#000',
+    color: "#000",
   },
   input: {
-    width: '100%',
+    width: "100%",
     height: 50,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 8,
     paddingHorizontal: 15,
     fontSize: 16,
-    color: '#000',
+    color: "#000",
     marginBottom: 15,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderWidth: 1,
   },
   checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 20,
   },
   checkboxText: {
     marginLeft: 10,
     fontSize: 12,
-    color: '#6c757d',
+    color: "#6c757d",
   },
   link: {
-    color: '#007BFF',
+    color: "#007BFF",
   },
   signUpButton: {
-    backgroundColor: '#007BFF',
+    backgroundColor: "#007BFF",
     paddingVertical: 15,
     borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 20,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   disabledButton: {
-    backgroundColor: '#A9A9A9',
+    backgroundColor: "#A9A9A9",
   },
-  inputFocused: {
-    borderColor: '#006FFD',
-    borderWidth: 2,
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginBottom: 10,
   },
 });
 
